@@ -181,7 +181,7 @@ suite('Functional Tests', function() {
             })
             .end(function (err, res) {
                 assert.equal(res.status, 200);
-                assert.deepEqual(res.body, { error: 'no update field(s) send', _id: testIds[1] });
+                assert.deepEqual(res.body, { error: 'no update field(s) sent', _id: testIds[1] });
                 done();
             });
     });
