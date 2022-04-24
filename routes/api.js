@@ -89,6 +89,7 @@ module.exports = function (app) {
       updates.updated_on = new Date().toJSON()
 
       app.locals.db.collection(project).updateOne({ _id: new ObjectId(req.body._id) }, { $set: updates }).then((result) => {
+        console.log(result)
         if (result.modifiedCount === 1) {
           res.send({ result: 'successfully updated', _id: req.body._id })
         } else {
@@ -103,8 +104,6 @@ module.exports = function (app) {
     .delete(function (req, res){
       let project = req.params.project;
 
-      console.log(`DELETE /api/issues/${project}, body: ${inspect(req.body)}`)
-
       if (!req.body._id) {
         res.send({ error: 'missing _id' })
         return
@@ -116,7 +115,6 @@ module.exports = function (app) {
       }
 
       app.locals.db.collection(project).deleteOne({ _id: new ObjectId(req.body._id) }).then((result) => {
-        console.log(result)
         if (result.deletedCount === 1) {
           res.send({ result: 'successfully deleted', _id: req.body._id })
         } else {
