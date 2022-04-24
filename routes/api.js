@@ -20,7 +20,6 @@ module.exports = function (app) {
       let project = req.params.project;
 
       app.locals.db.collection(project).find(req.query).toArray().then(issues => {
-        res.status(200);
         res.send(issues);
       });
       
@@ -33,7 +32,6 @@ module.exports = function (app) {
 
       const hasRequiredFields = req.body.issue_title && req.body.issue_text && req.body.created_by
       if (!hasRequiredFields) {
-        res.status(200)
         res.send({ error: 'required field(s) missing' })
         return
       }
@@ -65,13 +63,11 @@ module.exports = function (app) {
       console.log(`PUT /api/issues/${project}, body: ${inspect(req.body)}`)
 
       if (!req.body._id) {
-        res.status(200)
         res.send({ error: 'missing _id' })
         return
       }
 
       if (!ObjectId.isValid(req.body._id)) {
-        res.status(200)
         res.send({ error: 'could not update', _id: req.body._id })
         return
       }
@@ -81,7 +77,6 @@ module.exports = function (app) {
       const hasUpdateFields = validUpdates.some(e => req.body.hasOwnProperty(e))
       
       if (!hasUpdateFields) {
-        res.status(200)
         res.send({ error: 'no update field(s) send', _id: req.body._id})
         return
       }
@@ -93,12 +88,12 @@ module.exports = function (app) {
       })
       updates.updated_on = new Date().toJSON()
 
-      app.locals.db.collection(project).updateOne({ _id: new ObjectId(req.body._id) }, { $set: updates }).then(() => {
-        res.status(200)
-        res.send({ result: 'successfully updated', _id: req.body._id })
-      }).catch(() => {
-        res.status(200)
-        res.send({ error: 'could not update', _id: req.body._id })
+      app.locals.db.collection(project).updateOne({ _id: new ObjectId(req.body._id) }, { $set: updates }).then((result) => {
+        if (result.modifiedCount === 1) {
+          res.send({ result: 'successfully updated', _id: req.body._id })
+        } else {
+          res.send({ error: 'could not update', _id: req.body._id })
+        }
       })
       
     })
@@ -111,23 +106,22 @@ module.exports = function (app) {
       console.log(`DELETE /api/issues/${project}, body: ${inspect(req.body)}`)
 
       if (!req.body._id) {
-        res.status(200)
         res.send({ error: 'missing _id' })
         return
       }
 
       if (!ObjectId.isValid(req.body._id)) {
-        res.status(200)
         res.send({ error: 'could not delete', _id: req.body._id })
         return
       }
 
-      app.locals.db.collection(project).deleteOne({ _id: new ObjectId(req.body._id) }).then(() => {
-        res.status(200)
-        res.send({ result: 'successfully deleted', _id: req.body._id })
-      }).catch(() => {
-        res.status(200)
-        res.send({ error: 'could not delete', _id: req.body._id })
+      app.locals.db.collection(project).deleteOne({ _id: new ObjectId(req.body._id) }).then((result) => {
+        console.log(result)
+        if (result.deletedCount === 1) {
+          res.send({ result: 'successfully deleted', _id: req.body._id })
+        } else {
+          res.send({ error: 'could not delete', _id: req.body._id })
+        }
       })
       
     });
