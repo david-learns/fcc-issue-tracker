@@ -19,7 +19,12 @@ module.exports = function (app) {
     .get(function (req, res){
       let project = req.params.project;
 
-      app.locals.db.collection(project).find(req.query).toArray().then(issues => {
+      const filter = { ...req.query }
+      if (req.query.hasOwnProperty('_id')) {
+        filter._id = new ObjectId(req.query._id)
+      }
+
+      app.locals.db.collection(project).find(filter).toArray().then(issues => {
         res.send(issues);
       });
       
@@ -60,8 +65,6 @@ module.exports = function (app) {
     .put(function (req, res){
       let project = req.params.project;
 
-      console.log(`PUT /api/issues/${project}, body: ${inspect(req.body)}`)
-
       if (!req.body._id) {
         res.send({ error: 'missing _id' })
         return
@@ -89,7 +92,6 @@ module.exports = function (app) {
       updates.updated_on = new Date().toJSON()
 
       app.locals.db.collection(project).updateOne({ _id: new ObjectId(req.body._id) }, { $set: updates }).then((result) => {
-        console.log(result)
         if (result.modifiedCount === 1) {
           res.send({ result: 'successfully updated', _id: req.body._id })
         } else {
