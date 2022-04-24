@@ -77,7 +77,7 @@ module.exports = function (app) {
       const hasUpdateFields = validUpdates.some(e => req.body.hasOwnProperty(e))
       
       if (!hasUpdateFields) {
-        res.send({ error: 'no update field(s) send', _id: req.body._id})
+        res.send({ error: 'no update field(s) sent', _id: req.body._id})
         return
       }
 
