@@ -14,7 +14,7 @@ module.exports = function (app) {
 
   app.route('/api/issues/:project')
 
-  
+
   
     .get(function (req, res){
       let project = req.params.project;
@@ -33,7 +33,7 @@ module.exports = function (app) {
 
       const hasRequiredFields = req.body.issue_title && req.body.issue_text && req.body.created_by
       if (!hasRequiredFields) {
-        res.status(400)
+        res.status(200)
         res.send({ error: 'required field(s) missing' })
         return
       }
@@ -62,14 +62,16 @@ module.exports = function (app) {
     .put(function (req, res){
       let project = req.params.project;
 
+      console.log(`PUT /api/issues/${project}, body: ${inspect(req.body)}`)
+
       if (!req.body._id) {
-        res.status(400)
+        res.status(200)
         res.send({ error: 'missing _id' })
         return
       }
 
       if (!ObjectId.isValid(req.body._id)) {
-        res.status(400)
+        res.status(200)
         res.send({ error: 'could not update', _id: req.body._id })
         return
       }
@@ -79,7 +81,7 @@ module.exports = function (app) {
       const hasUpdateFields = validUpdates.some(e => req.body.hasOwnProperty(e))
       
       if (!hasUpdateFields) {
-        res.status(400)
+        res.status(200)
         res.send({ error: 'no update field(s) send', _id: req.body._id})
         return
       }
@@ -95,7 +97,7 @@ module.exports = function (app) {
         res.status(200)
         res.send({ result: 'successfully updated', _id: req.body._id })
       }).catch(() => {
-        res.status(400)
+        res.status(200)
         res.send({ error: 'could not update', _id: req.body._id })
       })
       
@@ -106,14 +108,16 @@ module.exports = function (app) {
     .delete(function (req, res){
       let project = req.params.project;
 
+      console.log(`DELETE /api/issues/${project}, body: ${inspect(req.body)}`)
+
       if (!req.body._id) {
-        res.status(400)
+        res.status(200)
         res.send({ error: 'missing _id' })
         return
       }
 
       if (!ObjectId.isValid(req.body._id)) {
-        res.status(400)
+        res.status(200)
         res.send({ error: 'could not delete', _id: req.body._id })
         return
       }
@@ -122,7 +126,7 @@ module.exports = function (app) {
         res.status(200)
         res.send({ result: 'successfully deleted', _id: req.body._id })
       }).catch(() => {
-        res.status(400)
+        res.status(200)
         res.send({ error: 'could not delete', _id: req.body._id })
       })
       

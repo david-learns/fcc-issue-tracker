@@ -42,7 +42,7 @@ const issue2 = {
 const issue3 = {
     _id: new ObjectId(),
     issue_title: 'issue title 3',
-    issue_text: '"The soul is the womb of self-righteous possibilities. Your heart nurtures the doorway to positivity.',
+    issue_text: 'The soul is the womb of self-righteous possibilities. Your heart nurtures the doorway to positivity.',
     created_by: 'test db setup',
     open: true,
     assigned_to: 'issue3',
@@ -100,7 +100,9 @@ function setupTestDb() {
         // add test docs and set ObjectId's to testIds
         db.collection('test-project').insertMany(issues).then(result => {
             console.log('added test issues');
+            client.close();
         });
+
     });
 
 }
